@@ -100,6 +100,15 @@ const TrendsChart = () => {
               dot={{ r: 4 }}
               isAnimationActive={isAnimating}
             />
+            <Line
+              type="monotone"
+              dataKey="fakeAccounts"
+              name="Fake Accounts"
+              stroke="hsl(280 70% 60%)"
+              strokeWidth={2}
+              dot={{ r: 4 }}
+              isAnimationActive={isAnimating}
+            />
           </LineChart>
         </ResponsiveContainer>
       </CardContent>

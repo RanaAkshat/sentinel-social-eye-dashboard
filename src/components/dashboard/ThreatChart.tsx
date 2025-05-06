@@ -36,6 +36,11 @@ const ThreatChart = () => {
         name: "Public Safety",
         value: tweetStats.threatCategories.publicSafety,
         color: "hsl(var(--threat-safety))"
+      },
+      {
+        name: "Fake Accounts",
+        value: tweetStats.threatCategories.fakeAccounts,
+        color: "hsl(280 70% 60%)"
       }
     ];
     

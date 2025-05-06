@@ -15,7 +15,9 @@ import {
   flaggedTweets, 
   getThreatTypeLabel, 
   getThreatTypeColor, 
-  getThreatTypeBgColor 
+  getThreatTypeBgColor,
+  getPlatformIcon,
+  getPlatformColor
 } from "@/data/mockData";
 
 const ThreatsTable = () => {
@@ -41,18 +43,19 @@ const ThreatsTable = () => {
   };
 
   return (
-    <Card className="col-span-5 overflow-hidden transition-all hover:shadow-md">
+    <Card className="overflow-hidden transition-all hover:shadow-md h-full">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
           <AlertTriangle className="h-5 w-5 text-threat-hate" /> 
-          Flagged Tweets
+          Flagged Posts
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="overflow-auto max-h-[320px]">
+        <div className="overflow-auto max-h-[400px]">
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Platform</TableHead>
                 <TableHead>Content</TableHead>
                 <TableHead>User</TableHead>
                 <TableHead>Threat Type</TableHead>
@@ -66,7 +69,12 @@ const ThreatsTable = () => {
                   key={tweet.id} 
                   className="animate-fade-in"
                 >
-                  <TableCell className="max-w-[300px] truncate">
+                  <TableCell>
+                    <Badge className={getPlatformColor(tweet.platform)}>
+                      {getPlatformIcon(tweet.platform)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="max-w-[250px] truncate">
                     {tweet.content}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">

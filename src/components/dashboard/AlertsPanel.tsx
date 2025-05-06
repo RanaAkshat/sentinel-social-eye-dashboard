@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Bell, AlertTriangle } from "lucide-react";
-import { recentAlerts } from "@/data/mockData";
+import { recentAlerts, getPlatformColor } from "@/data/mockData";
 
 const AlertsPanel = () => {
   const [alerts, setAlerts] = useState<any[]>([]);
@@ -22,11 +23,17 @@ const AlertsPanel = () => {
     
     // Add new alert every 20 seconds
     const interval = setInterval(() => {
+      const platforms = ["twitter", "instagram", "facebook", "reddit"];
+      const randomPlatform = platforms[Math.floor(Math.random() * platforms.length)];
+      const threatTypes = ["Hate Speech", "Cyberbullying", "Violence", "Public Safety", "Fake Account"];
+      const randomThreatType = threatTypes[Math.floor(Math.random() * threatTypes.length)];
+      
       const newAlert = {
         id: `alert-${Date.now()}`,
-        message: `🔴 New threat detected in tweet by @user${Math.floor(Math.random() * 1000)}`,
+        message: `🔴 ${randomThreatType} detected in post by @user${Math.floor(Math.random() * 1000)}`,
         time: "Just now",
-        severity: "high" as const
+        severity: "high" as const,
+        platform: randomPlatform
       };
       setAlerts(prev => [newAlert, ...prev.slice(0, 3)]);
     }, 20000);
@@ -67,7 +74,12 @@ const AlertsPanel = () => {
                 key={alert.id}
                 className={`p-3 bg-card border rounded-md animate-fade-in ${getAlertStyles(alert.severity)}`}
               >
-                <p className="font-medium">{alert.message}</p>
+                <div className="flex justify-between items-start">
+                  <p className="font-medium">{alert.message}</p>
+                  <Badge className={getPlatformColor(alert.platform)}>
+                    {alert.platform.charAt(0).toUpperCase()}
+                  </Badge>
+                </div>
                 <p className="text-xs text-muted-foreground mt-1">{alert.time}</p>
               </div>
             ))
