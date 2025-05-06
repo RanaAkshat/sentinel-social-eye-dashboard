@@ -12,7 +12,7 @@ import { tweetStats } from "@/data/mockData";
 
 const Dashboard = () => {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex w-full">
         <DashboardSidebar />
         
