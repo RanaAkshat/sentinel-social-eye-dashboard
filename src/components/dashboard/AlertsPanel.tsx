@@ -1,46 +1,41 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bell, AlertTriangle } from "lucide-react";
-import { recentAlerts, getPlatformColor } from "@/data/mockData";
+import { getPlatformColor } from "@/data/mockData"; // keep this if you use the badge colors
+import { fetchThreats } from "@/services/api"; // ✅ adjust this path if needed
 
 const AlertsPanel = () => {
   const [alerts, setAlerts] = useState<any[]>([]);
-  
+
   useEffect(() => {
-    // Add alerts one by one for animation effect
     const loadAlerts = async () => {
-      const loadedAlerts: any[] = [];
-      for (let i = 0; i < recentAlerts.length; i++) {
-        loadedAlerts.push(recentAlerts[i]);
-        setAlerts([...loadedAlerts]);
-        await new Promise(resolve => setTimeout(resolve, 300));
+      try {
+        const threats = await fetchThreats();
+        const processed = threats.slice(0, 5).map((t: any, idx: number) => ({
+          id: t.id || `alert-${Date.now()}-${idx}`,
+          message: `🔴 ${t.Threat_Category} detected: ${t.Tweet}`,
+          time: new Date().toLocaleTimeString(),
+          severity: t.Threat_Category.includes("Violence") ? "high"
+                   : t.Threat_Category.includes("Cyberbullying") ? "medium"
+                   : "low",
+          platform: "twitter", // update if you have platform info
+        }));
+        setAlerts(processed);
+      } catch (error) {
+        console.error("Error loading threats:", error);
       }
     };
-    
-    loadAlerts();
-    
-    // Add new alert every 20 seconds
+
+    loadAlerts(); // load once on mount
+
     const interval = setInterval(() => {
-      const platforms = ["twitter", "instagram", "facebook", "reddit"];
-      const randomPlatform = platforms[Math.floor(Math.random() * platforms.length)];
-      const threatTypes = ["Hate Speech", "Cyberbullying", "Violence", "Public Safety", "Fake Account"];
-      const randomThreatType = threatTypes[Math.floor(Math.random() * threatTypes.length)];
-      
-      const newAlert = {
-        id: `alert-${Date.now()}`,
-        message: `🔴 ${randomThreatType} detected in post by @user${Math.floor(Math.random() * 1000)}`,
-        time: "Just now",
-        severity: "high" as const,
-        platform: randomPlatform
-      };
-      setAlerts(prev => [newAlert, ...prev.slice(0, 3)]);
-    }, 20000);
-    
+      loadAlerts(); // refresh every 10 seconds
+    }, 10000);
+
     return () => clearInterval(interval);
   }, []);
-  
+
   const getAlertStyles = (severity: string) => {
     switch (severity) {
       case "high":
@@ -53,7 +48,7 @@ const AlertsPanel = () => {
         return "";
     }
   };
-  
+
   return (
     <Card className="col-span-2 overflow-hidden transition-all hover:shadow-md">
       <CardHeader className="flex flex-row items-center justify-between">
